@@ -1,6 +1,6 @@
 ---
 title: "BEE 4750/5750 Homework 1"
-author: "Your name here (your netID here)"
+author: "Nathan Follett (njf47)"
 date: `j import Dates; Dates.Date(Dates.now())`
 weave_options:
 	term: true
@@ -20,7 +20,7 @@ Pkg.instantiate()
 ```
 
 # Problem 1
-
+Fun times 
 ## Problem 1.1
 
 ```julia
