@@ -20,7 +20,7 @@ Pkg.instantiate()
 ```
 
 # Problem 1
-Fun times 
+
 ## Problem 1.1
 
 ```julia
@@ -40,7 +40,15 @@ graphplot(A, names=names, markersize=0.15, markershapes=shapes, markercolor=:whi
 ```
 
 ## Problem 1.2
+```math
+100 m^3/d of wastewater * 1kg/m^3 of YUK in the wastewater = 100 kg/d YUK 
+x1 + x2 = 100 m^3/d
+1-0.005(x2) = 0.8
+x2 = 40, x1 = 60
+Total Price:
+(60^2)/20 + 1.5(40) = $240/d
 
+```
 ## Problem 1.3
 
 ## Problem 1.4
@@ -52,3 +60,4 @@ graphplot(A, names=names, markersize=0.15, markershapes=shapes, markercolor=:whi
 ## Problem 1.7
 
 # References
+julia compile_report.jl solution-template.jmd html
