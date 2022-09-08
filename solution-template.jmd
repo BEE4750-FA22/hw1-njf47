@@ -6,9 +6,9 @@ weave_options:
     term: true
     cache: off
     md2pdf:
-	    template: "bee4750pdf.tpl"
+        template: "bee4750pdf.tpl"
     md2html:
-	    template: "bee4750html.tpl"
+        template: "bee4750html.tpl"
 ---
 
 <!-- This setups the environment and installs packages, but doesn't appear in the generated document -->
@@ -52,6 +52,16 @@ Total Price:
 (60^2)/20 + 1.5(40) = $240/d
 ```
 ## Problem 1.3
+```julia 
+
+function multiple_return_values(x, y)
+return x+y, x*y
+end
+a, b = multiple_return_values(2, 5)
+println(a)
+println(b)
+
+```
 
 ## Problem 1.4
 
@@ -62,4 +72,3 @@ Total Price:
 ## Problem 1.7
 
 # References
-julia compile_report.jl solution-template.jmd html
