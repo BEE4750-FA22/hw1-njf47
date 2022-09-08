@@ -3,12 +3,12 @@ title: "BEE 4750/5750 Homework 1"
 author: "Nathan Follett (njf47)"
 date: `j import Dates; Dates.Date(Dates.now())`
 weave_options:
-	term: true
-	cache: off
-	md2pdf:
-		template: "bee4750pdf.tpl"
-	md2html:
-		template: "bee4750html.tpl"
+    term: true
+    cache: off
+    md2pdf:
+	    template: "bee4750pdf.tpl"
+    md2html:
+	    template: "bee4750html.tpl"
 ---
 
 <!-- This setups the environment and installs packages, but doesn't appear in the generated document -->
@@ -40,14 +40,16 @@ graphplot(A, names=names, markersize=0.15, markershapes=shapes, markercolor=:whi
 ```
 
 ## Problem 1.2
-```math
+
 100 m^3/d of wastewater * 1kg/m^3 of YUK in the wastewater = 100 kg/d YUK 
+```math
 x1 + x2 = 100 m^3/d
 1-0.005(x2) = 0.8
 x2 = 40, x1 = 60
+```
 Total Price:
+```math
 (60^2)/20 + 1.5(40) = $240/d
-
 ```
 ## Problem 1.3
 
