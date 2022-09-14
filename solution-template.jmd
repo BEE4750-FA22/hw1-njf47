@@ -23,6 +23,8 @@ Pkg.instantiate()
 
 ## Problem 1.1
 
+See image in github repository 
+
 ```julia
 using GraphRecipes, Plots
 
@@ -43,61 +45,119 @@ graphplot(A, names=names, markersize=0.15, markershapes=shapes, markercolor=:whi
 
 100 m^3/d of wastewater * 1kg/m^3 of YUK in the wastewater = 100 kg/d YUK 
 ```math
-x1 + x2 + x3 = 100 m^3/d
-1-0.005(x2) = 0.8
+x1 + x2 + x3 = 100 m^3/d \\
+1-0.005(x2) = 0.8 \\
+
 x2 = 40, x1 = 60, x3 = 0
 ```
-Explanation: We choose a treatment plan where 60% of the treatment
+Explanation: There are three treatment options: method 1, method 2, and no treatment (direct discharge). 
+
+We choose a treatment plan where 60% of the treatment
 goes through the land disposal while the remaining 40% is chemical
 disposal. Since land disposal has a max efficiency of 80%, we cannot 
 treat the remaining effluent to a lower standard or let any waste go
-untreated, or else the EPA standard will not be met. 
+untreated, or else the EPA standard will not be met. This was how the value for x2 was determined. 
 
 Total Price for this option: 
 ```math
 (60^2)/20 + 1.5(40) = $240/d
 ```
+Besides the treatment efficiencies and cost, we must also take into account the brook flow rate and initial Concentration 
+to determine the final concentration that will be measured against the EPA standard. 
 
 ## Problem 1.3
 ```julia 
-x_1 = 60
-x_2 = 40
 
-function multiple_return_values(x_1, x_2)
-    conc_1 = 0.8*x_1
-    conc_2 = 1-0.005*(x_2)
-    conc = conc_1*(x_1/100) + conc_2*(x_2/100)
-
+function yukmodel(x_1, x_2, Q, conc_0)
+# x_1 & x_2 = amount of wastewater disposed to each treatment site (m^3/d)
+# Q = flow of effluent (m^3/d)
+# conc_0 = initial YUK concentration (kg/m^3)
+# e_1, e_2, e_3 = efficiency of treatment methods 
+# x_3 = untreated amount of wastewater (m^3/d)
+    # finding untreated amount based on input parameters x1 and x2
+    x_3 = Q - x_1 - x_2
+    e_3 = 0
+    cost_3 = 0
+    # contaminant concentration in kg/d
+    yuk = (conc_0)*Q
+    # efficiency of method 1
+    e_1 = 0.8
+    # cost of method 1
     cost_1 = ((x_1)^2)/20
+    # efficiency of method 2
+    e_2 = 1 - 0.005*x_2
+    # cost of method 2
     cost_2 = (1.5)*x_2
-    cost = cost_1 + cost_2
-return  conc, cost
+    # overall efficiency 
+    e_tot = (e_1)*(x_1/Q) + (e_2)*(x_2/Q) + (e_3)*(x_3/Q)
+    # final concentration after treatment
+    conc = (1 - e_tot)*yuk
+    cost = cost_1 + cost_2 + cost_3
+
+    return  conc, cost
 end
 
+conc,cost = yukmodel(60,40,100,1)
+println("Concentration is ",conc, " , Cost is ",cost)
 ```
 
 ## Problem 1.4
 ```julia
 
-x = [0 5 10 20 40 50 60 80 90 100 ]
-y = [0 5 10 20 40 50 60 80 90 100 ] 
-concvec = zeros[1,10]
-costvec = zeros[1,10]
+x = [0 5 10 15 20 25 30 35 40 45 50 55 60 65 70 75 80 85 90 95 100 ]
+y = [100 95 90 85 80 75 70 65 60 55 50 45 40 35 30 25 20 15 10 5 0] 
+# counting index for for loop
+global count = 0
+# data vectors
+concvec = zeros(1000)
+costvec = zeros(1000)
 
-for i in 1:10
-    concvec[i],costvec[i] = multiple_return_values(x[i],y[i])
+for i in 1:21
+   for j in i:21
+    global count = count + 1
+    model = yukmodel(x[i],y[j],100,1)
+    concvec[count] = model[1]
+    costvec[count] = model[2]
+        # display possible combinations
+        if model[1] < 20
+            println(model)
+            println(x[i])
+            println(y[j])
+        end
+    end
 end
 
-scatter(concvec, costvec)
-xlabel = "concentration"
-ylabel = "treatment cost"
-hline!(20)
-
+scatter(concvec[1:count], costvec[1:count], title="Cost of Treatment vs YUK Concentration");
+xlabel!("YUK Concentration (kg/d)");
+ylabel!("Treatment cost (usd)")
 ```
 ## Problem 1.5
+Based on the plot above, I would select the treatment plan lowest on the y-axis (cost), as long as it is less
+than 20 on the x-axis. From the perspective of the factory owners, the best option would be the lowest possible cost (no treatment or $0), 
+but this is not possible. Choosing the least expensive but regulatory compliant option is the next best thing. 
+The effluent standard of 20 kg/d must be adhered to, or else the regulatory agency (US EPA) could hand down fines
+or try to shut down operation of the plant until the contamination got under the standard. The public also would presumably want
+the treatment plan that removed the most YUK to be implemented. If 60% of the YUK was treated with method 1 and 40% 
+was treated with method 2, this would be the cheapest compliant option, coming in at $240 and a concentration of just under 20 kg/d. 
+
+With my experimental design it solved for the value that would meet EPA standards, not just the lowest price. This was the main parameter to consider, so the same 
+conclusion would have been reached with another method because of the limitation of plant efficiencies. 
+
 
 ## Problem 1.6
+We could consider what happens if the plastic products plant could change the material they use to something that didn't produce YUK at all (or did it at a lower level with some sort of blend). 
+We could model how much that switch would cost to the company. Initially the investment/principal costs may be higher but for example in a 10 year return period, 
+maybe that initial investment would be made back by savings in treatment costs. 
+
+The land disposal should be investigated to see if there are negative impacts on wildlife. Even though humans may not directly 
+interact with the disposed YUK, animals and plants could uptake it and pass it up the food chain through bioaccumulation, presenting a danger to human health. 
+
+We also made the assumption that the YUK does not decay at all, which would influence the results and mean we are performing unecessary treatment. This could be investigated further. 
+
+We made the assumption that the costs of the treatment methods were static, when in reality they may respond to economic pressures (for example, the 
+chemical treatment could get more expensive if the cost of the materials used went up). 
 
 ## Problem 1.7
 
 # References
+Anne Potter showed me how the global command worked so I could use it as an index when plotting my model function. 
